@@ -1,0 +1,42 @@
+﻿@model List<MVC.Models.Entity.Users>
+
+<style>
+    hr{
+        background-color: black;
+    }
+
+    /* 表格樣式 */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+</style>
+
+<form asp-controller="Users" asp-action="Create" method="get">
+    <button type="submit">新增</button>
+</form>
+
+<h1> User List</h1>
+<a href="@Url.Action("Create", "Users")">去新增</a>
+<hr />
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>CreatDateTime</th>
+            <th>UpdateTime</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var users in Model)
+        {
+            <tr>
+                <td> @users.Id</td>
+                <td> @users.Name</td>
+                <td> @users.CreateDateTime</td>
+                <td> @users.UpdateTime</td>
+            </tr>
+        }
+    </tbody>
+</table>
