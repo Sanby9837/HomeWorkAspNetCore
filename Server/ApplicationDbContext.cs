@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MVC.Models.Entity;
+using Server.Models.Entity;
 
-namespace MVC
+namespace Server
 {
     public class ApplicationDbContext : DbContext
     {

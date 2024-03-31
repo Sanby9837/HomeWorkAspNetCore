@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVC", "MVC\MVC.csproj", "{0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{6C5ECA4C-69C9-4BCE-B5A6-1E43C11ABC92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{B836C63E-10D5-4281-820A-F6D4A801C96C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6C5ECA4C-69C9-4BCE-B5A6-1E43C11ABC92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C5ECA4C-69C9-4BCE-B5A6-1E43C11ABC92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C5ECA4C-69C9-4BCE-B5A6-1E43C11ABC92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B836C63E-10D5-4281-820A-F6D4A801C96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B836C63E-10D5-4281-820A-F6D4A801C96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B836C63E-10D5-4281-820A-F6D4A801C96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B836C63E-10D5-4281-820A-F6D4A801C96C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

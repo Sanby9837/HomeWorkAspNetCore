@@ -1,4 +1,4 @@
-﻿namespace MVC.Models.Entity
+﻿namespace Server.Models.Entity
 {
     public class Users
     {

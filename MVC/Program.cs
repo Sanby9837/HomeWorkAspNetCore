@@ -1,7 +1,5 @@
-using MVC;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-
+using Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
