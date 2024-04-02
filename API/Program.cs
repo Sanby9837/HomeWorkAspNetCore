@@ -1,3 +1,4 @@
+using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Server;
 
@@ -11,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Logging.AddSeq(builder.Configuration.GetSection("Seq")["ServerUrl"]);
+builder.Services.AddScoped<LoggingMiddleware>();
+
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 // ¸Ñ°£¸ó°ì°t¸m
@@ -41,4 +45,5 @@ app.MapControllers();
 
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseMiddleware<LoggingMiddleware>();
 app.Run();

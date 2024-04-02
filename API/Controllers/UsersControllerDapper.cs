@@ -62,8 +62,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, Users user)
+        [HttpPut]
+        public IActionResult UpdateUser([FromQuery] int id, Users user)
         {
             user.Id = id;
             if (user == null || user.Id != id)
