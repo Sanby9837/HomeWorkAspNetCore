@@ -1,19 +1,24 @@
 using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Server;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Logging.AddSeq(builder.Configuration.GetSection("Seq")["ServerUrl"]);
 builder.Services.AddScoped<LoggingMiddleware>();
+
+var env = builder.Environment.EnvironmentName;
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile($"appsettings.{env}.json", optional: false, reloadOnChange: true);
 
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -37,6 +42,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if (env == "Development")
+{
+    Console.WriteLine("!!!!dev");
+}
+
+
+app.UseRouting();
+
+app.UseMiddleware<LoggingMiddleware>();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/", async context =>
+    {
+        var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+        await context.Response.WriteAsync("Process Name:" + "{" + processName + "}");
+    });
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -45,5 +69,5 @@ app.MapControllers();
 
 app.UseCors(myAllowSpecificOrigins);
 
-app.UseMiddleware<LoggingMiddleware>();
+
 app.Run();
