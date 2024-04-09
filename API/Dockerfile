@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 446
+EXPOSE 443
 
 ENV ASPNETCORE_ENVIRONMENT=Production
 

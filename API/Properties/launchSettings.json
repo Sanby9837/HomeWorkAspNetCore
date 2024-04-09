@@ -23,8 +23,7 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,
-      "useSSL": true,
-      "ASPNETCORE_ENVIRONMENT": "Development"
+      "useSSL": true
     },
     "EmptyTemplateCoreApp": {
       "commandName": "Project",

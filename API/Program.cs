@@ -16,11 +16,15 @@ builder.Configuration
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 var seqConn = builder.Configuration.GetSection("Seq")["ServerUrl"];
-Console.WriteLine($"I'm {env} Seq:::{seqConn}");
+Console.WriteLine($"I'm {env} Seq:{seqConn}");
 builder.Logging.AddSeq(seqConn);
+
 builder.Services.AddScoped<LoggingMiddleware>();
 
 
@@ -46,18 +50,18 @@ if (app.Environment.IsDevelopment())
 }
 
 
-//app.UseRouting();
+app.UseRouting();
 
 app.UseMiddleware<LoggingMiddleware>();
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapGet("/", async context =>
-//    {
-//        var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-//        await context.Response.WriteAsync("Process Name:" + "{" + processName + "}");
-//    });
-//});
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/", async context =>
+    {
+        var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+        await context.Response.WriteAsync("Process Name:" + "{" + processName + "}");
+    });
+});
 
 app.UseHttpsRedirection();
 
