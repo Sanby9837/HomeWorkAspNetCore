@@ -2,6 +2,8 @@ using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Server;
 using System.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,21 +14,36 @@ builder.Configuration
     .AddJsonFile($"appsettings.{env}.json", optional: false, reloadOnChange: true);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// IMemoryCache服務注入
+builder.Services.AddMemoryCache();
 
+// MSSQL
+var SqlConn = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new Exception("MSSQL 連線異常請聯絡Kila哥");
 
-var seqConn = builder.Configuration.GetSection("Seq")["ServerUrl"];
-Console.WriteLine($"I'm {env} Seq:{seqConn}");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(SqlConn));
+
+// Redis 
+var redisConn = builder.Configuration.GetSection("Redis")["ConnectionString"]
+    ?? throw new Exception("Redis 連線異常請聯絡雷哥");
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConn));
+
+// SeqLog
+var seqConn = builder.Configuration.GetSection("Seq")["ServerUrl"]
+    ?? throw new Exception("SeqLog 連線異常請聯絡史蒂夫哥");
+
 builder.Logging.AddSeq(seqConn);
 
-builder.Services.AddScoped<LoggingMiddleware>();
 
+// 取得不同appsetting的Seq字串測試
+Console.WriteLine($"I'm {env} Seq:{seqConn}");
+
+builder.Services.AddScoped<LoggingMiddleware>();
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 // 解除跨域配置

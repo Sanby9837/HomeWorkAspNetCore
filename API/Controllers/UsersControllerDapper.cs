@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Server.Models.Entity;
+using StackExchange.Redis;
 
 namespace API.Controllers
 {
@@ -11,16 +13,21 @@ namespace API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
+        private readonly IConnectionMultiplexer _redis;
 
-        public UsersControllerDapper(IConfiguration configuration)
+        public UsersControllerDapper(IConfiguration configuration, IConnectionMultiplexer redis)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
+            _connectionString = _configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Dapper 連線異常");
+            _redis = redis;
         }
 
         [HttpGet]
         public IActionResult GetUsers()
         {
+            var db = _redis.GetDatabase(0);
+            db.StringSet("username", "sanby");
+
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -70,7 +77,7 @@ namespace API.Controllers
             {
                 return BadRequest("Invalid user data");
             }
-            
+
             user.UpdateTime = DateTime.Now;
 
             using (var connection = new SqlConnection(_connectionString))

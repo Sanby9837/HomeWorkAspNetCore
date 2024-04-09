@@ -2,6 +2,7 @@
 
 using API.Model.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Server;
 using Server.Models.Entity;
 using System.Xml.Linq;
@@ -13,19 +14,26 @@ namespace API.Controllers
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public UsersController(ApplicationDbContext context)
+        private readonly IMemoryCache _memoryCache;
+        public UsersController(ApplicationDbContext context,IMemoryCache memoryCache)
         {
             _context = context;
+            _memoryCache = memoryCache;
         }
-
+        
 
         [HttpGet]
         public IActionResult Get()
         {
-            var getData = _context.Users.ToList();
+            if(!_memoryCache.TryGetValue("UserD",out List<Users> cachedData))
+            {
+                //快取沒有data，抓資料庫的資料來放
+                cachedData = _context.Users.ToList();
+                //data存入快取過期時間設為5分鐘
+                _memoryCache.Set("UserD", cachedData, TimeSpan.FromMinutes(1));
+            }
 
-            return Ok(getData);
+            return Ok(cachedData);
         }
 
         [HttpGet("{id}")]
