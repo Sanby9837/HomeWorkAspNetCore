@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Server.Models.Entity;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace API.Controllers
 {
@@ -14,24 +15,31 @@ namespace API.Controllers
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
         private readonly IConnectionMultiplexer _redis;
+        private readonly IDatabase _redisDb;
 
-        public UsersControllerDapper(IConfiguration configuration, IConnectionMultiplexer redis)
+        public UsersControllerDapper(IConfiguration configuration, IConnectionMultiplexer redis, IDatabase redisDb)
         {
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Dapper 連線異常");
             _redis = redis;
+            _redisDb = redisDb;
         }
 
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var db = _redis.GetDatabase(0);
-            db.StringSet("username", "sanby");
+            var usersJson = _redisDb.StringGet("users");
+            if (usersJson.HasValue)
+            {
+                var users = JsonSerializer.Deserialize<List<Users>>(usersJson);
+                return Ok(users);
+            }
 
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var users = connection.Query<Users>("SELECT * FROM Users");
+                var users = connection.Query<Users>("SELECT * FROM Users").AsList();
+                _redisDb.StringSet("users", JsonSerializer.Serialize(users),TimeSpan.FromMinutes(1));
                 return Ok(users);
             }
         }

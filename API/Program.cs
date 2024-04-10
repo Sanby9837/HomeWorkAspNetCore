@@ -23,7 +23,7 @@ builder.Services.AddMemoryCache();
 
 // MSSQL
 var SqlConn = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? throw new Exception("MSSQL 連線異常請聯絡Kila哥");
+    ?? throw new Exception("MSSQL 連線異常請聯絡大K哥");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(SqlConn));
 
@@ -33,9 +33,17 @@ var redisConn = builder.Configuration.GetSection("Redis")["ConnectionString"]
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConn));
 
+//IDatabase
+builder.Services.AddSingleton<IDatabase>(provider =>
+{
+    var redisDb = provider.GetRequiredService<IConnectionMultiplexer>();
+    return redisDb.GetDatabase();
+});
+
+
 // SeqLog
 var seqConn = builder.Configuration.GetSection("Seq")["ServerUrl"]
-    ?? throw new Exception("SeqLog 連線異常請聯絡史蒂夫哥");
+    ?? throw new Exception("SeqLog 連線異常請聯絡史哥");
 
 builder.Logging.AddSeq(seqConn);
 
