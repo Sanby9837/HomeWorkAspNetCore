@@ -4,6 +4,7 @@ using Server;
 using System.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +47,6 @@ var seqConn = builder.Configuration.GetSection("Seq")["ServerUrl"]
     ?? throw new Exception("SeqLog 連線異常請聯絡史哥");
 
 builder.Logging.AddSeq(seqConn);
-
 
 // 取得不同appsetting的Seq字串測試
 Console.WriteLine($"I'm {env} Seq:{seqConn}");
