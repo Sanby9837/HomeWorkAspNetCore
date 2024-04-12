@@ -7,6 +7,8 @@ using System.Text.Json;
 
 namespace API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class ProductControllerDapper : Controller
     {
         private readonly IConfiguration _configuraion;
